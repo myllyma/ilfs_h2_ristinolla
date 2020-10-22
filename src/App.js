@@ -1,24 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {useState} from 'react';
 
-function App() {
+const Ristinolla = ({boardState}) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="board">
+
+    </div>
+  );
+}
+
+const App = () => {
+  const [gameRunning, setGameRunning] = useState(false);
+  const [boardState, setboardState] = useState([["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]]);
+  const [playerTurn, setPlayerTurn] = useState(1);
+
+  const playerClickedOnBoard = () => {
+
+  }
+
+  return (
+    <div className="app">
+      <Ristinolla boardState={boardState}/>
     </div>
   );
 }
