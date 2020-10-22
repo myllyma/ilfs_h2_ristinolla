@@ -1,7 +1,27 @@
 .App {
-  text-align: center;
+  display: flex;
+  width: 50%;
+  height: 50%;
 }
 
 .board {
-  
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 3px;
+  min-height: 200px;
+  min-width: 200px;
+}
+
+.boardElement {
+  display: inline-block;
+  background-color: lightgray;
+  min-height: 50px;
+  min-width: 50px;
+}
+
+.boardPiece {
+  display: inline-block;
+  max-width: 90%;
+  max-height: 90%;
+  padding: 5%;
 }
