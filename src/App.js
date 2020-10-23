@@ -9,11 +9,11 @@ const Ristinolla = ({boardState, handleBoardClick}) => {
   const displayBoard = boardState.flat().map((element, index) => {
     let boardPiece;
     switch (element) {
-      case "empty":
+      case "":
         boardPiece = <div key={index} onClick={handleBoardClick(index)} className="boardElement"></div>; break;
-      case "cross":
+      case "X":
         boardPiece = <div key={index} onClick={handleBoardClick(index)} className="boardElement"><img src="cross.svg" className="boardPiece" alt="cross"></img></div>; break;
-      case "zero":
+      case "O":
         boardPiece = <div key={index} onClick={handleBoardClick(index)} className="boardElement"><img src="circle.svg" className="boardPiece" alt="circle"></img></div>; break;
       default:
         console.log("ERROR: board state corrupted");
@@ -45,15 +45,20 @@ const GameStateDisplay = ({activePlayerTurn, gameHasBeenWon}) => {
 const App = () => {
   const [gameHasBeenWon, setGameHasBeenWon] = useState(false);
   const [gameIsRunning, setGameIsRunning] = useState(false);
-  const [boardState, setboardState] = useState([["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]]);
+  const [boardState, setboardState] = useState([["", "", ""],["", "", ""],["", "", ""]]);
   const [activePlayerTurn, setActivePlayerTurn] = useState(1);
 
   const startNewGame = () => {
     setGameHasBeenWon(false);
     setGameIsRunning(true);
-    setboardState([["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]]);
+    setboardState([["", "", ""],["", "", ""],["", "", ""]]);
     setActivePlayerTurn(1);
-    console.log("uusi peli alustettu")
+  }
+
+  // TODO: handle game ending check.
+  const isGameOver = (board) => {
+    let gameOver = false;
+    return gameOver;
   }
 
   const handleBoardClick = (location) => () => {
@@ -63,22 +68,18 @@ const App = () => {
 
     const x = location % boardState[0].length;
     const y = Math.floor(location / boardState[0].length);
-    console.log(`player clicked on location x:${x} y:${y}`);
     
+    let newBoardState = [];
     // Update the board.
-    if (boardState[y][x] === "empty") {
-      const newBoardState = JSON.parse(JSON.stringify(boardState));
-      newBoardState[y][x] = activePlayerTurn === 1 ? "cross" : "zero";
+    if (boardState[y][x] === "") {
+      newBoardState = JSON.parse(JSON.stringify(boardState));
+      newBoardState[y][x] = activePlayerTurn === 1 ? "X" : "O";
       setboardState(newBoardState);
     } else {
       return;
     }
 
-    // TODO: handle game ending check.
-    let gameWon = false;
-
-
-
+    let gameWon = isGameOver(newBoardState);
     setGameHasBeenWon(gameWon);
 
     // Change active player.
