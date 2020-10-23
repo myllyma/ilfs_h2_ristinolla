@@ -6,7 +6,7 @@ import {useState} from 'react';
 // Displays the current state of the board
 //----------------------------------------------------------
 const Ristinolla = ({boardState, handleBoardClick}) => {
-  const displayBoard = boardState.board.flat().map((element, index) => {
+  const displayBoard = boardState.flat().map((element, index) => {
     let boardPiece;
     switch (element) {
       case "empty":
@@ -45,13 +45,13 @@ const GameStateDisplay = ({activePlayerTurn, gameHasBeenWon}) => {
 const App = () => {
   const [gameHasBeenWon, setGameHasBeenWon] = useState(false);
   const [gameIsRunning, setGameIsRunning] = useState(false);
-  const [boardState, setboardState] = useState({board: [["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]], columns: 3});
+  const [boardState, setboardState] = useState([["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]]);
   const [activePlayerTurn, setActivePlayerTurn] = useState(1);
 
   const startNewGame = () => {
     setGameHasBeenWon(false);
     setGameIsRunning(true);
-    setboardState({board: [["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]], columns: 3});
+    setboardState([["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]]);
     setActivePlayerTurn(1);
     console.log("uusi peli alustettu")
   }
@@ -61,15 +61,14 @@ const App = () => {
       return;
     }
 
-    const x = location % boardState.columns;
-    const y = Math.floor(location / boardState.columns);
+    const x = location % boardState[0].length;
+    const y = Math.floor(location / boardState[0].length);
     console.log(`player clicked on location x:${x} y:${y}`);
     
     // Update the board.
-    if (boardState.board[y][x] === "empty") {
-      const newBoard = JSON.parse(JSON.stringify(boardState.board));
-      newBoard[y][x] = activePlayerTurn === 1 ? "cross" : "zero";
-      const newBoardState = {...boardState, board:newBoard};
+    if (boardState[y][x] === "empty") {
+      const newBoardState = JSON.parse(JSON.stringify(boardState));
+      newBoardState[y][x] = activePlayerTurn === 1 ? "cross" : "zero";
       setboardState(newBoardState);
     } else {
       return;
@@ -79,7 +78,7 @@ const App = () => {
     let gameWon = false;
 
 
-    
+
     setGameHasBeenWon(gameWon);
 
     // Change active player.
@@ -97,7 +96,7 @@ const App = () => {
       </div>
     );
   
-  // Game is running, but not over.
+  // Game is running, but not finished.
   } else {
     if (!gameHasBeenWon) {
       return(
@@ -107,7 +106,7 @@ const App = () => {
         </div>
       );
     
-    // Game is running and over.
+    // Game is running and finished.
     } else {
       return(
         <div className="app">
