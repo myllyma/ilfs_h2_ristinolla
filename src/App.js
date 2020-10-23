@@ -17,8 +17,8 @@ const Ristinolla = ({boardState, handleBoardClick}) => {
         boardPiece = <div key={index} onClick={handleBoardClick(index)} className="boardElement"><img src="circle.svg" className="boardPiece" alt="circle"></img></div>; break;
       default:
         console.log("ERROR: board state corrupted");
-      }
-      return boardPiece;
+    }
+    return boardPiece;
   });
 
   return (
@@ -31,37 +31,26 @@ const Ristinolla = ({boardState, handleBoardClick}) => {
 //----------------------------------------------------------
 // Displays the current state of the game at the top of the screen
 //----------------------------------------------------------
-const GameStateDisplay = ({playerTurn, gameHasBeenWon}) => {
-  let displayPlayer = "";
-  switch (playerTurn) {
-    case 1:
-      displayPlayer = "risti";
-      break;
-    case 2:
-      displayPlayer = "nolla";
-      break;
-    default:
-      console.log("ERROR: active player state corrupted");
-  }
-
-  const output = gameHasBeenWon ? <p>Peli lopussa, {displayPlayer} voitti</p> : <p>Pelaajan {displayPlayer} vuoro</p>;
-  return(output);
+const GameStateDisplay = ({activePlayerTurn, gameHasBeenWon}) => {
+  return(
+    <p>Pelaajan, {activePlayerTurn === 1 ? "risti" : "nolla"} vuoro</p>
+  );
 }
 
 //----------------------------------------------------------
 // Main
 //----------------------------------------------------------
 const App = () => {
-  const [gameRunning, setGameRunning] = useState(false);
   const [gameHasBeenWon, setGameHasBeenWon] = useState(false);
+  const [gameIsRunning, setGameIsRunning] = useState(false);
   const [boardState, setboardState] = useState({board: [["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]], columns: 3});
-  const [playerTurn, setPlayerTurn] = useState(1);
+  const [activePlayerTurn, setActivePlayerTurn] = useState(1);
 
-  const initializeGame = () => {
-    setGameRunning(true);
+  const startNewGame = () => {
     setGameHasBeenWon(false);
+    setGameIsRunning(true);
     setboardState({board: [["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]], columns: 3});
-    setPlayerTurn(1);
+    setActivePlayerTurn(1);
   }
 
   const handleBoardClick = (location) => () => {
@@ -73,38 +62,58 @@ const App = () => {
     const y = Math.floor(location / boardState.columns);
     console.log(`player clicked on location x:${x} y:${y}`);
     
+    // Update the board.
     if (boardState.board[y][x] === "empty") {
       const newBoard = JSON.parse(JSON.stringify(boardState.board));
-      newBoard[y][x] = playerTurn === 1 ? "cross" : "zero";
+      newBoard[y][x] = activePlayerTurn === 1 ? "cross" : "zero";
       const newBoardState = {...boardState, board:newBoard};
       setboardState(newBoardState);
     } else {
       return;
     }
 
-    checkForGameOver();
+    // TODO: handle game ending check.
+    let gameWon = false;
 
+    setGameHasBeenWon(gameWon);
+
+    // Change active player.
+    if (!gameWon) {
+      setActivePlayerTurn(activePlayerTurn === 1 ? 2 : 1);
+    }
+  }
+
+  // First game state, splash screen/welcome screen.
+  if (!gameIsRunning) {
+    return (
+      <div className="app">
+        <p>Tervetuloa ristinolla-peliin</p>
+        <button onClick={startNewGame}>Aloita peli</button>
+      </div>
+    );
+  
+  // Game is running, but not over.
+  } else {
     if (!gameHasBeenWon) {
-      setPlayerTurn(playerTurn === 1 ? 2 : 1);
+      return(
+        <div className="app">
+          <GameStateDisplay activePlayerTurn={activePlayerTurn} gameHasBeenWon={gameHasBeenWon}/>
+          <Ristinolla boardState={boardState} handleBoardClick={handleBoardClick}/>
+        </div>
+      );
+    
+    // Game is running and over.
+    } else {
+      return(
+        <div className="app">
+          <GameStateDisplay activePlayerTurn={activePlayerTurn} gameHasBeenWon={gameHasBeenWon}/>
+          <Ristinolla boardState={boardState} handleBoardClick={handleBoardClick}/>
+          <p>Pelaaja {activePlayerTurn === 1 ? "risti" : "nolla"} voitti!</p>
+          <button onClick={startNewGame}>Aloita uusi peli</button>
+        </div>
+      );
     }
   }
-
-  const checkForGameOver = () => {
-    if (!gameRunning) {
-      return;
-    }
-  }
-
-  const gameOver = () => {
-    setGameHasBeenWon(true);
-  }
-
-  return (
-    <div className="app">
-      <GameStateDisplay playerTurn={playerTurn} gameHasBeenWon={gameHasBeenWon}/>
-      <Ristinolla boardState={boardState} handleBoardClick={handleBoardClick}/>
-    </div>
-  );
 }
 
 export default App;
