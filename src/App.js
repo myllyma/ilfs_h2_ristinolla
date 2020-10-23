@@ -32,9 +32,11 @@ const Ristinolla = ({boardState, handleBoardClick}) => {
 // Displays the current state of the game at the top of the screen
 //----------------------------------------------------------
 const GameStateDisplay = ({activePlayerTurn, gameHasBeenWon}) => {
-  return(
-    <p>Pelaajan, {activePlayerTurn === 1 ? "risti" : "nolla"} vuoro</p>
-  );
+  if (gameHasBeenWon) {
+    return(<p>Peli loppu, pelaaja {activePlayerTurn === 1 ? "risti" : "nolla"} voitti!</p>);
+  } else {
+    return(<p>Pelaajan, {activePlayerTurn === 1 ? "risti" : "nolla"} vuoro</p>);
+  }
 }
 
 //----------------------------------------------------------
@@ -51,6 +53,7 @@ const App = () => {
     setGameIsRunning(true);
     setboardState({board: [["empty", "empty", "empty"],["empty", "empty", "empty"],["empty", "empty", "empty"]], columns: 3});
     setActivePlayerTurn(1);
+    console.log("uusi peli alustettu")
   }
 
   const handleBoardClick = (location) => () => {
@@ -75,6 +78,8 @@ const App = () => {
     // TODO: handle game ending check.
     let gameWon = false;
 
+
+    
     setGameHasBeenWon(gameWon);
 
     // Change active player.
@@ -108,7 +113,7 @@ const App = () => {
         <div className="app">
           <GameStateDisplay activePlayerTurn={activePlayerTurn} gameHasBeenWon={gameHasBeenWon}/>
           <Ristinolla boardState={boardState} handleBoardClick={handleBoardClick}/>
-          <p>Pelaaja {activePlayerTurn === 1 ? "risti" : "nolla"} voitti!</p>
+          <br></br>
           <button onClick={startNewGame}>Aloita uusi peli</button>
         </div>
       );
